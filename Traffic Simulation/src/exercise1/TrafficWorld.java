@@ -33,7 +33,7 @@ public class TrafficWorld extends World {
 	Intersection[] intersectArrayVert = new Intersection[NUM_OF_VROADS]; 
 	Intersection[] nearIntersectArray = new Intersection[NUM_OF_HROADS];
 	private int carCounter = 0; 
-	private int carCounterBound=180;
+	private int carCounterBound=60;
 
 	//act method to be used to generate all cars in TF world
 	public void act(){

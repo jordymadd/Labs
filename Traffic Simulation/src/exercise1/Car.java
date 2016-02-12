@@ -1,6 +1,7 @@
 package exercise1;
 import java.util.Random;
 import greenfoot.Actor;
+import greenfoot.Greenfoot;
 import greenfoot.GreenfootImage;
 
 public class Car extends Actor implements TrafficLightSensor{
@@ -18,8 +19,8 @@ public class Car extends Actor implements TrafficLightSensor{
 	private int currentX; 
 	private Direction turnDirection; 
 	private Intersection in; 
-	int counter= 0; 
- 
+	private static GreenfootImage image = new GreenfootImage("images/explosion1.png");
+
 	public Car(){
 		int randNum = Random(4); 
 		GreenfootImage image = new GreenfootImage(carImgPath[randNum]); 
@@ -36,13 +37,7 @@ public class Car extends Actor implements TrafficLightSensor{
 
 
 	public void act(){
-		//***************Feb 09th this is where i Left off.. trying to figure out how to detect intersecting objects, 
-		//remove them, and cause an explosion!! 
-//		getIntersectingObjects(TrafficWorld.class); 
-//		if(getOneIntersectingObject(TrafficWorld.class)!=null){
-//			
-//		}
-		counter++; 
+		Actor car = getOneIntersectingObject(Car.class); 
 		currentY = this.getY(); 
 		currentX = this.getX(); 
 		if(speed==Speed.REGULAR){
@@ -56,16 +51,30 @@ public class Car extends Actor implements TrafficLightSensor{
 		}
 		if (turning==true){
 			doTurn();
-			System.out.println("do turn");
 		}
-
 		handleWrap();
+
+		try{
+			if (car != null) { //if car is not intersecting with another car. 
+				throw new Exception(); 
+			}
+		}catch(Exception e){
+			System.out.println("catch called");
+			Greenfoot.playSound("sound/car_explosion.wav");
+			Explosion explosion = new Explosion(); 
+			getWorld().addObject(explosion, getX(), getY());
+			getWorld().removeObject(car);
+			getWorld().removeObject(this); 
+		}finally {
+			System.out.println("finally called");
+		}
 	}
 
 	//this method places the car back to where it started once it reaches the edge. 
 	private void handleWrap() {
 		if(isAtEdge()){
 			getWorld().removeObject(this);
+			System.out.println("remove3");
 			//			switch (this.getRotation()) {
 			//			case D_WEST : setLocation(0, getY());
 			//			break;
@@ -78,7 +87,6 @@ public class Car extends Actor implements TrafficLightSensor{
 			//			}
 		}
 	}
-
 
 	public enum Speed{
 		STOP(0), 
@@ -130,10 +138,6 @@ public class Car extends Actor implements TrafficLightSensor{
 		}
 	}
 
-
-
-
-
 	private void turnLeft() {
 		turning = true; 
 		switch (this.direction) {
@@ -179,35 +183,19 @@ public class Car extends Actor implements TrafficLightSensor{
 		int r = rand.nextInt(100);
 		if(r >= 90){
 			turnRight();
-			System.out.println("turn right");
 		}
 		else if(r > 80 && r < 90){
 			turnLeft();
-			System.out.println("turn left");
 		}
 	}
-
-
-
-	//when car is determining whether to turn right or left it will call this method 
-	//	private boolean turnDetermine(){
-	//		Random rand = new Random(); 
-	//		int randomNum = rand.nextInt(2); 
-	//		return randomNum == 1; 
-	//	}
-
 
 	@Override
 	public void nearIntersection(Intersection intersection) { 
 		in =intersection; 
-		
+
 		if(turning==false){
 			turnDetermine();
-			System.out.println("turn determine");
 		}
-		//		else {
-		//			doTurn();
-		//		}
 
 		if (intersection.isGreen(direction)){
 			speed =Speed.REGULAR; 
@@ -218,14 +206,10 @@ public class Car extends Actor implements TrafficLightSensor{
 		else if (intersection.isRed(direction)){
 			speed =Speed.SLOW; 
 		}
-		//I can use this to print out to console what the position of the car is relative to the intersection
-		//		System.out.println("Near");
 	}
 
 	@Override
 	public void inInterSection(Intersection intersection) {
-		
-	 
 
 		if (intersection.isGreen(direction)){
 			speed =Speed.REGULAR; 
@@ -236,13 +220,6 @@ public class Car extends Actor implements TrafficLightSensor{
 		else if (intersection.isRed(direction)){
 			speed =Speed.STOP; 
 		}
-		//I can use this to print out to console what the position of the car is relative to the intersection
-		//		System.out.println("In");
-		
-//		if (turning==true){
-//			doTurn();
-//			System.out.println("do turn");
-//		}
 	}
 
 	@Override
@@ -256,8 +233,6 @@ public class Car extends Actor implements TrafficLightSensor{
 		else if (intersection.isRed(direction)){
 			speed =Speed.REGULAR; 
 		}
-		//I can use this to print out to console what the position of the car is relative to the intersection
-		//		System.out.println("Out");
 	}
 
 	@Override
