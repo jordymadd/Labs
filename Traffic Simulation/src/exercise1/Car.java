@@ -6,11 +6,11 @@ import greenfoot.GreenfootImage;
 
 public class Car extends Actor implements TrafficLightSensor{
 
-	private static String[] carImgPath = {"images/topCarBlue.png", "images/topCarPurple.png",
+	protected static String[] carImgPath = {"images/topCarBlue.png", "images/topCarPurple.png",
 			"images/topCarYellow.png","images/topCarRed.png"};
 
 	private Speed speed = Speed.REGULAR; 
-	private Direction direction; 
+	protected Direction direction; 
 	Random rand = new Random();
 	private boolean turning=false; 
 	private int targetY;
@@ -20,6 +20,7 @@ public class Car extends Actor implements TrafficLightSensor{
 	private Direction turnDirection; 
 	private Intersection in; 
 	private static GreenfootImage image = new GreenfootImage("images/explosion1.png");
+	public boolean isTurningRight =true; 
 
 	public Car(){
 		int randNum = Random(4); 
@@ -71,20 +72,10 @@ public class Car extends Actor implements TrafficLightSensor{
 	}
 
 	//this method places the car back to where it started once it reaches the edge. 
-	private void handleWrap() {
+	protected void handleWrap() {
 		if(isAtEdge()){
 			getWorld().removeObject(this);
-			System.out.println("remove3");
-			//			switch (this.getRotation()) {
-			//			case D_WEST : setLocation(0, getY());
-			//			break;
-			//			case D_SOUTH : setLocation(getX(), 0);
-			//			break;
-			//			case D_EAST :setLocation(TrafficWorld.WIDTH, getY());
-			//			break;
-			//			case D_NORTH :setLocation(getX(), TrafficWorld.HEIGHT);
-			//			break;
-			//			}
+						
 		}
 	}
 
@@ -137,8 +128,8 @@ public class Car extends Actor implements TrafficLightSensor{
 			}
 		}
 	}
-
-	private void turnLeft() {
+     
+	public void turnLeft() {
 		turning = true; 
 		switch (this.direction) {
 		case WEST : targetX = in.getX()-(TrafficWorld.WIDTH_OF_ROAD/4);
@@ -158,7 +149,7 @@ public class Car extends Actor implements TrafficLightSensor{
 
 
 
-	private void turnRight() {
+	protected void turnRight() {
 		turning = true; 
 		switch (this.direction) {
 		//this is a place holder variable for the y coordinates so when called the car can be repositioned correctly. currentY must be a variable that utilizes getCurrentY. 
@@ -188,6 +179,9 @@ public class Car extends Actor implements TrafficLightSensor{
 			turnLeft();
 		}
 	}
+	
+	
+	
 
 	@Override
 	public void nearIntersection(Intersection intersection) { 

@@ -40,17 +40,25 @@ public class TrafficWorld extends World {
 		carCounter++; 
 		if (carCounter == carCounterBound){
 			Random rand = new Random(); 
+			
+			int rNum = rand.nextInt(4); 
 			int randHoriz = rand.nextInt(NUM_OF_HROADS); 
 			int randVert = rand.nextInt(NUM_OF_VROADS); 
-			Car carGen = new Car(); 
-			switch (carGen.getDirection()) {
-			case NORTH: this.addObject(carGen, roadArrayVert[randVert].getX()+(WIDTH_OF_ROAD/4), HEIGHT);
+			//array of different cars
+			Car carGen[] = new Car[4];
+			carGen[0] = new YellowCar(); 
+			carGen[1] = new RedCar(); 
+			carGen[2] = new PurpleCar(); 
+			carGen[3] = new BlueCar();
+			
+			switch (carGen[rNum].getDirection()) {
+			case NORTH: this.addObject(carGen[rNum], roadArrayVert[randVert].getX()+(WIDTH_OF_ROAD/4), HEIGHT);
 			break;
-				case SOUTH: this.addObject(carGen, roadArrayVert[randVert].getX()-(WIDTH_OF_ROAD/4), 0);
+				case SOUTH: this.addObject(carGen[rNum], roadArrayVert[randVert].getX()-(WIDTH_OF_ROAD/4), 0);
 			break;
-				case EAST: this.addObject(carGen, 0, roadArrayHoriz[randHoriz].getY()+(WIDTH_OF_ROAD/4));
+				case EAST: this.addObject(carGen[rNum], 0, roadArrayHoriz[randHoriz].getY()+(WIDTH_OF_ROAD/4));
 			break;
-				case WEST: this.addObject(carGen, WIDTH, roadArrayHoriz[randHoriz].getY()-(WIDTH_OF_ROAD/4));
+				case WEST: this.addObject(carGen[rNum], WIDTH, roadArrayHoriz[randHoriz].getY()-(WIDTH_OF_ROAD/4));
 			break;
 			}
 			carCounter = 0; 
