@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import greenfoot.Greenfoot;
 import greenfoot.GreenfootImage;
 import greenfoot.World;
 
@@ -14,6 +15,10 @@ public class TrafficWorld extends World {
 	private String purpleCar = "images/topCarPurple.png"; 
 	private String yellowCar = "images/topCarYellow.png"; 
 	private String redCar = "images/topCarRed.png"; 
+	private static final int BLUE = 3; 
+	private static final int PURPLE = 2; 
+	private static final int RED = 1; 
+	private static final int YELLOW = 0; 
 	public static final int WIDTH = 1000; 
 	public static final int HEIGHT = 750;
 	private static final int CELL_SIZE = 1;
@@ -32,46 +37,67 @@ public class TrafficWorld extends World {
 	Intersection[] intersectArray = new Intersection[NUM_OF_HROADS*NUM_OF_VROADS]; 
 	Intersection[] intersectArrayVert = new Intersection[NUM_OF_VROADS]; 
 	Intersection[] nearIntersectArray = new Intersection[NUM_OF_HROADS];
+	private int gameOverCounter = 0; 
 	private int carCounter = 0; 
-	private int carCounterBound=60;
+	private int gameOverBound = 2500; 
+	private int carGenBound=60;
+	private String intersectionStats; 
+
 
 	//act method to be used to generate all cars in TF world
-	public void act(){
+	public void act(){ 
+		gameOverCounter ++; 
 		carCounter++; 
-		if (carCounter == carCounterBound){
+		//array of different cars
+		Car carGen[] = new Car[4];
+		carGen[YELLOW] = new YellowCar(); 
+		carGen[RED] = new RedCar(); 
+		carGen[PURPLE] = new PurpleCar(); 
+		carGen[BLUE] = new BlueCar();
+
+		if (carCounter == carGenBound){
 			Random rand = new Random(); 
-			
+
 			int rNum = rand.nextInt(4); 
 			int randHoriz = rand.nextInt(NUM_OF_HROADS); 
 			int randVert = rand.nextInt(NUM_OF_VROADS); 
-			//array of different cars
-			Car carGen[] = new Car[4];
-			carGen[0] = new YellowCar(); 
-			carGen[1] = new RedCar(); 
-			carGen[2] = new PurpleCar(); 
-			carGen[3] = new BlueCar();
-			
+
 			switch (carGen[rNum].getDirection()) {
 			case NORTH: this.addObject(carGen[rNum], roadArrayVert[randVert].getX()+(WIDTH_OF_ROAD/4), HEIGHT);
 			break;
-				case SOUTH: this.addObject(carGen[rNum], roadArrayVert[randVert].getX()-(WIDTH_OF_ROAD/4), 0);
+			case SOUTH: this.addObject(carGen[rNum], roadArrayVert[randVert].getX()-(WIDTH_OF_ROAD/4), 0);
 			break;
-				case EAST: this.addObject(carGen[rNum], 0, roadArrayHoriz[randHoriz].getY()+(WIDTH_OF_ROAD/4));
+			case EAST: this.addObject(carGen[rNum], 0, roadArrayHoriz[randHoriz].getY()+(WIDTH_OF_ROAD/4));
 			break;
-				case WEST: this.addObject(carGen[rNum], WIDTH, roadArrayHoriz[randHoriz].getY()-(WIDTH_OF_ROAD/4));
+			case WEST: this.addObject(carGen[rNum], WIDTH, roadArrayHoriz[randHoriz].getY()-(WIDTH_OF_ROAD/4));
 			break;
 			}
 			carCounter = 0; 
 		}
+
+		//after the counter reaches the counter limit a statistics screen will appear
+
+		if (gameOverCounter == gameOverBound){
+			//for loop that will print out all of the intersection array stats. 
+			for(int i = 0; i < intersectArray.length; i++){
+				intersectionStats += "\n"+intersectArray[i];
+			}
+			GameOverScreen carStats = new GameOverScreen("SIMULATION OVER\n\n" + "Blocks Traveled: " + "\nBlue\t " + "Purple\t "+ "Red\t " + "Yellow\t\n" 
+					+ carGen[BLUE] + carGen[PURPLE] + carGen[RED] + carGen[YELLOW]); 
+			carStats.msgTxt += intersectionStats; 
+			addObject(carStats, getWidth() / 2, getHeight() / 2);
+			//		    Greenfoot.stop(); // this will stop greenfoot but you can press play again without having to reset (currently commented out) . 
+			return;
+		}
 	}
 
-	
 	public TrafficWorld(){
 		super(WIDTH, HEIGHT, CELL_SIZE); 
+		setPaintOrder(this.getClass(), Car.class); 
 		GreenfootImage background = this.getBackground(); 
 		background.setColor(Color.GREEN);
 		background.fill();
-	
+
 		//horizontal roads (5) 
 		for (int i = 0; i < NUM_OF_HROADS; i++){
 			roadArrayHoriz[i] = new Roads(WIDTH, WIDTH_OF_ROAD); 
@@ -85,28 +111,28 @@ public class TrafficWorld extends World {
 		}
 
 
-//		//vertical cars
-//		for (int i = 0; i < NUM_OF_VROADS; i++){
-//			//cars heading south (left side) 
-//			Car car = new Car();  
-//			this.addObject(car, (WIDTH_OF_ROAD/4)+((VERTICAL_WHITESPACE+WIDTH_OF_ROAD)*i), car.Random(HEIGHT));
-//			//cars heading north (right side) 
-//			Car car2 = new Car();  
-//			this.addObject(car2, (WIDTH_OF_ROAD/4)*3+((VERTICAL_WHITESPACE+WIDTH_OF_ROAD)*i), car.Random(HEIGHT));
-//
-//		}
-//
-//		//horizontal cars 
-//
-//		for (int i = 0; i < NUM_OF_HROADS; i++){
-//			//cars heading west (bottom  road) 
-//			Car car = new Car();  
-//			this.addObject(car, car.Random(WIDTH), (WIDTH_OF_ROAD/4)+((HORIZONTAL_WHITESPACE+WIDTH_OF_ROAD)*i));
-//			//cars heading east (top row) 
-//			Car car2 = new Car();  
-//			this.addObject(car2, car2.Random(WIDTH), ((WIDTH_OF_ROAD/4)*3)+((HORIZONTAL_WHITESPACE+WIDTH_OF_ROAD)*i));
-//
-//		}
+		//		//vertical cars
+		//		for (int i = 0; i < NUM_OF_VROADS; i++){
+		//			//cars heading south (left side) 
+		//			Car car = new Car();  
+		//			this.addObject(car, (WIDTH_OF_ROAD/4)+((VERTICAL_WHITESPACE+WIDTH_OF_ROAD)*i), car.Random(HEIGHT));
+		//			//cars heading north (right side) 
+		//			Car car2 = new Car();  
+		//			this.addObject(car2, (WIDTH_OF_ROAD/4)*3+((VERTICAL_WHITESPACE+WIDTH_OF_ROAD)*i), car.Random(HEIGHT));
+		//
+		//		}
+		//
+		//		//horizontal cars 
+		//
+		//		for (int i = 0; i < NUM_OF_HROADS; i++){
+		//			//cars heading west (bottom  road) 
+		//			Car car = new Car();  
+		//			this.addObject(car, car.Random(WIDTH), (WIDTH_OF_ROAD/4)+((HORIZONTAL_WHITESPACE+WIDTH_OF_ROAD)*i));
+		//			//cars heading east (top row) 
+		//			Car car2 = new Car();  
+		//			this.addObject(car2, car2.Random(WIDTH), ((WIDTH_OF_ROAD/4)*3)+((HORIZONTAL_WHITESPACE+WIDTH_OF_ROAD)*i));
+		//
+		//		}
 
 
 
@@ -142,6 +168,7 @@ public class TrafficWorld extends World {
 					tf.setRotation(tf.getDirection().getRotation());
 					this.addObject(tf, xPosition, yPosition); 
 				}
+
 			}
 		}
 

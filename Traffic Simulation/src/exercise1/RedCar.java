@@ -1,9 +1,12 @@
 package exercise1;
 
+import exercise1.Car.Speed;
 import greenfoot.GreenfootImage;
 
-public class RedCar extends Car {
+public class RedCar extends WrapWorld {
 	
+	protected static int redIntsPassed = 0; 
+
 	public RedCar(){
 		int randNum = Random(4); 
 		GreenfootImage image = new GreenfootImage(carImgPath[3]); 
@@ -12,37 +15,33 @@ public class RedCar extends Car {
 		setRotation(direction.getRotation());
 		this.setImage(image);
 	}
-	
-	protected void handleWrap() {
-		if(isAtEdge()){
-			switch (this.getRotation()) {
-			case 110 : setLocation(0, getY()); //west
-			break;
-			case 90 : setLocation(getX(), 0); //south
-			break;
-			case 0 :setLocation(TrafficWorld.WIDTH, getY()); //east
-			break;
-			case 270 :setLocation(getX(), TrafficWorld.HEIGHT); //north
-			break;
-			}
-		}
-	}
+
 	
 	public void turnDetermine(){
-		//I think if the turnDetermine() is blank then that should let the car just go straight
-		
-		//this method will determine whether or not to turn or go straight (10% chance right, 10% left, 80% straight)
-//		int r = rand.nextInt(100);
-//		if(r >= 90){
-//			turnRight();
-//		}
-//		else if(r > 80 && r < 90){
-//			turnLeft();
-//		}
-	}
+		//I think if the turnDetermine() is blank then that should let the car just go straight.. Yup I was right :) 
 
-//	public RedCar() {
-//		// TODO Auto-generated constructor stub
-//	}
+	}
+	
+	@Override
+	public void inInterSection(Intersection intersection) {
+		
+		
+		if (intersection.isGreen(direction)){
+			speed =Speed.REGULAR; 
+		}
+		else if (intersection.isYellow(direction)){
+			speed =Speed.REGULAR; 
+		}
+		else if (intersection.isRed(direction)){
+			speed =Speed.REGULAR; 
+		}
+	redIntsPassed++; 
+	}
+	
+	@Override
+	public String toString() {
+		String output = "" + redIntsPassed + "\t\t\t\t"; 
+		return output; 
+	}
 
 }

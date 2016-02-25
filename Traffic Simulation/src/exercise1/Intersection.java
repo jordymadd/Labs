@@ -19,12 +19,20 @@ public class Intersection extends Actor {
 	private ArrayList<TrafficLightSensor> previousNear = new ArrayList<TrafficLightSensor>();
 	private ArrayList<TrafficLightSensor> previousIn = new ArrayList<TrafficLightSensor>();
 	private GreenfootImage image; 
+	public int carsPassed = 0; 
+	private int counter =0; 
+	private double timeBetweenArrival;  
+	private static int intersectionNumber = 0;
+	private int intID; 
+
 
 	public Intersection(){
+		intID = intersectionNumber; 
+		intersectionNumber++; 
 		image = new GreenfootImage(TrafficWorld.WIDTH_OF_ROAD, TrafficWorld.WIDTH_OF_ROAD); 
-//		 this is an image of my intersection in case I want to see it visually
-//				image.setColor(Color.blue);
-//				image.fill();
+		//this is an image of my intersection in case I want to see it visually
+		//image.setColor(Color.blue);
+		//image.fill();
 		setImage(image);
 		Direction[] directionArray = Direction.values(); 
 		for (int i = 0; i < trafficLight.length; i++){
@@ -86,11 +94,13 @@ public class Intersection extends Actor {
 		previousNear = (ArrayList<TrafficLightSensor>) currentNear; 
 	}
 
+	int IntersectionsEntered =0; 
 	private void notifyInCars(){
 		List<TrafficLightSensor> currentIn = getIntersectingObjects(TrafficLightSensor.class);
 		for (TrafficLightSensor trafficLightSensor : currentIn){
 			if (!previousIn.contains(trafficLightSensor)){
 				trafficLightSensor.inInterSection(this);
+				carsPassed++;
 			}
 		}
 		previousIn = (ArrayList<TrafficLightSensor>) currentIn; 
@@ -98,17 +108,29 @@ public class Intersection extends Actor {
 
 
 	private void notifyLeavingCars(){
-			for (TrafficLightSensor trafficLightSensor : previousIn){
-				if (previousNear.contains(trafficLightSensor)){
-					if(!isRed(trafficLightSensor.getDirection())){
-						trafficLightSensor.leavingIntersection(this);
-					}
-				
+
+		for (TrafficLightSensor trafficLightSensor : previousIn){
+			if (previousNear.contains(trafficLightSensor)){
+				if(!isRed(trafficLightSensor.getDirection())){
+					trafficLightSensor.leavingIntersection(this);
+
+				}
+
 			}
 		}
 
+
 	}
 
+
+	@Override
+	public String toString() {
+		if(carsPassed>0){
+			timeBetweenArrival= 60/carsPassed;
+		}
+		return "Intersection " + intID + " [carsPassed=" + carsPassed + ", timeBetweenArrival=" 
+		+ timeBetweenArrival + "]";
+	}
 
 }
 

@@ -9,7 +9,7 @@ public class Car extends Actor implements TrafficLightSensor{
 	protected static String[] carImgPath = {"images/topCarBlue.png", "images/topCarPurple.png",
 			"images/topCarYellow.png","images/topCarRed.png"};
 
-	private Speed speed = Speed.REGULAR; 
+	protected Speed speed = Speed.REGULAR; 
 	protected Direction direction; 
 	Random rand = new Random();
 	private boolean turning=false; 
@@ -21,6 +21,7 @@ public class Car extends Actor implements TrafficLightSensor{
 	private Intersection in; 
 	private static GreenfootImage image = new GreenfootImage("images/explosion1.png");
 	public boolean isTurningRight =true; 
+	protected static int intsPassed = 0; 
 
 	public Car(){
 		int randNum = Random(4); 
@@ -67,7 +68,6 @@ public class Car extends Actor implements TrafficLightSensor{
 			getWorld().removeObject(car);
 			getWorld().removeObject(this); 
 		}finally {
-			System.out.println("finally called");
 		}
 	}
 
@@ -181,7 +181,7 @@ public class Car extends Actor implements TrafficLightSensor{
 	}
 	
 	
-	
+
 
 	@Override
 	public void nearIntersection(Intersection intersection) { 
@@ -204,7 +204,7 @@ public class Car extends Actor implements TrafficLightSensor{
 
 	@Override
 	public void inInterSection(Intersection intersection) {
-
+		
 		if (intersection.isGreen(direction)){
 			speed =Speed.REGULAR; 
 		}

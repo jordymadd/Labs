@@ -1,9 +1,11 @@
 package exercise1;
 
+import exercise1.Car.Speed;
 import greenfoot.GreenfootImage;
 
 public class PurpleCar extends Car {
-	
+	protected static int purpleIntsPassed = 0; 
+
 	public PurpleCar(){
 		int randNum = Random(4); 
 		GreenfootImage image = new GreenfootImage(carImgPath[1]); 
@@ -20,5 +22,27 @@ public class PurpleCar extends Car {
 			turnLeft();
 		}
 
+	}
+	
+	@Override
+	public void inInterSection(Intersection intersection) {
+		
+		
+		if (intersection.isGreen(direction)){
+			speed =Speed.REGULAR; 
+		}
+		else if (intersection.isYellow(direction)){
+			speed =Speed.REGULAR; 
+		}
+		else if (intersection.isRed(direction)){
+			speed =Speed.REGULAR; 
+		}
+	purpleIntsPassed++; 
+	}
+	
+	@Override
+	public String toString() {
+		String output = "" + purpleIntsPassed + "\t\t\t\t"; 
+		return output; 
 	}
 }
