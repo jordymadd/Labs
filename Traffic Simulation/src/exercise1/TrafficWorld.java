@@ -1,9 +1,13 @@
 package exercise1;
 
 import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+
+import javax.swing.JFrame;
 
 import greenfoot.Greenfoot;
 import greenfoot.GreenfootImage;
@@ -31,6 +35,7 @@ public class TrafficWorld extends World {
 	private static final int NUM_OF_HROADS = 5;
 	private static final int NUM_OF_HROAD_SPACES = NUM_OF_HROADS-1;
 	private static final int HORIZONTAL_WHITESPACE = (HEIGHT -(WIDTH_OF_ROAD*NUM_OF_HROADS))/NUM_OF_HROAD_SPACES; 
+	ReadAndWrite readAndWriter = new ReadAndWrite();
 
 	Roads[] roadArrayHoriz = new Roads[NUM_OF_HROADS]; 
 	Roads[] roadArrayVert = new Roads[NUM_OF_VROADS];
@@ -42,18 +47,27 @@ public class TrafficWorld extends World {
 	private int gameOverBound = 2500; 
 	private int carGenBound=60;
 	private String intersectionStats; 
+	private int simulationCounter = 0; 
+	public int simulationTime=3600; //1min 
 
 
 	//act method to be used to generate all cars in TF world
 	public void act(){ 
+		simulationCounter++; 
 		gameOverCounter ++; 
 		carCounter++; 
 		//array of different cars
 		Car carGen[] = new Car[4];
-		carGen[YELLOW] = new YellowCar(); 
-		carGen[RED] = new RedCar(); 
-		carGen[PURPLE] = new PurpleCar(); 
-		carGen[BLUE] = new BlueCar();
+		carGen[YELLOW] = new YellowCar(readAndWriter.getDriveStyleYellow()); 
+		carGen[RED] = new RedCar(readAndWriter.getDriveStyleRed()); 
+		carGen[PURPLE] = new PurpleCar(readAndWriter.getDriveStylePurple()); 
+		carGen[BLUE] = new BlueCar(readAndWriter.getDriveStyleBlue()); 
+
+
+		//time simulation will run 
+		if(simulationCounter==simulationTime){
+			Greenfoot.stop();
+		}
 
 		if (carCounter == carGenBound){
 			Random rand = new Random(); 
@@ -93,6 +107,13 @@ public class TrafficWorld extends World {
 
 	public TrafficWorld(){
 		super(WIDTH, HEIGHT, CELL_SIZE); 
+		readAndWriter.read();
+		simulationTime = readAndWriter.getSimTime();
+		carGenBound = readAndWriter.getCarGenInput(); 
+		
+	
+		//		Swing simulationSetup = new Swing("title of something");
+		//		simulationSetup
 		setPaintOrder(this.getClass(), Car.class); 
 		GreenfootImage background = this.getBackground(); 
 		background.setColor(Color.GREEN);
@@ -109,33 +130,7 @@ public class TrafficWorld extends World {
 			roadArrayVert[i] = new Roads(WIDTH_OF_ROAD, HEIGHT); 
 			this.addObject(roadArrayVert[i], (VERTICAL_WHITESPACE + WIDTH_OF_ROAD+1)*i + WIDTH_OF_ROAD/2, HEIGHT/2);		
 		}
-
-
-		//		//vertical cars
-		//		for (int i = 0; i < NUM_OF_VROADS; i++){
-		//			//cars heading south (left side) 
-		//			Car car = new Car();  
-		//			this.addObject(car, (WIDTH_OF_ROAD/4)+((VERTICAL_WHITESPACE+WIDTH_OF_ROAD)*i), car.Random(HEIGHT));
-		//			//cars heading north (right side) 
-		//			Car car2 = new Car();  
-		//			this.addObject(car2, (WIDTH_OF_ROAD/4)*3+((VERTICAL_WHITESPACE+WIDTH_OF_ROAD)*i), car.Random(HEIGHT));
-		//
-		//		}
-		//
-		//		//horizontal cars 
-		//
-		//		for (int i = 0; i < NUM_OF_HROADS; i++){
-		//			//cars heading west (bottom  road) 
-		//			Car car = new Car();  
-		//			this.addObject(car, car.Random(WIDTH), (WIDTH_OF_ROAD/4)+((HORIZONTAL_WHITESPACE+WIDTH_OF_ROAD)*i));
-		//			//cars heading east (top row) 
-		//			Car car2 = new Car();  
-		//			this.addObject(car2, car2.Random(WIDTH), ((WIDTH_OF_ROAD/4)*3)+((HORIZONTAL_WHITESPACE+WIDTH_OF_ROAD)*i));
-		//
-		//		}
-
-
-
+		
 		//intersection generator
 		for(int horizRoadNo = 0; horizRoadNo < roadArrayHoriz.length; horizRoadNo++){
 			for(int vertRoadNo = 0; vertRoadNo < roadArrayVert.length; vertRoadNo++){
